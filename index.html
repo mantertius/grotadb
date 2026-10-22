@@ -122,14 +122,24 @@
   <!-- ======================================================================= -->
   <!-- APP SHELL: SIDEBAR FIXA + WORKSPACE LIMPO                               -->
   <!-- ======================================================================= -->
-  <div class="flex-1 flex overflow-hidden">
+  <div class="flex-1 flex overflow-hidden relative">
 
-    <!-- SIDEBAR ESQUERDA -->
-    <aside class="w-60 bg-white border-r border-slate-200/90 flex flex-col justify-between shrink-0 no-print">
+    <!-- BOTÃO FLUTUANTE PARA ABRIR A SIDEBAR QUANDO RECOLHIDA -->
+    <button
+      type="button"
+      id="btn-expand-sidebar"
+      class="hidden fixed top-3.5 left-3.5 z-30 p-2 rounded-xl bg-white border border-slate-200 shadow-sm text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition no-print"
+      title="Mostrar menu lateral (Ctrl+B)"
+    >
+      <i data-lucide="PanelLeftOpen" class="w-4 h-4"></i>
+    </button>
+
+    <!-- SIDEBAR ESQUERDA (RECOLHÍVEL) -->
+    <aside id="app-sidebar" class="w-60 bg-white border-r border-slate-200/90 flex flex-col justify-between shrink-0 transition-all duration-200 no-print">
       
       <!-- Topo da Sidebar -->
       <div class="p-4 space-y-5">
-        <!-- Brand -->
+        <!-- Brand + Botão Esconder Sidebar -->
         <div class="flex items-center justify-between px-1">
           <div class="flex items-center gap-2.5">
             <div class="w-7 h-7 rounded-lg bg-slate-900 text-white flex items-center justify-center">
@@ -144,6 +154,14 @@
               </div>
             </div>
           </div>
+          <button
+            type="button"
+            id="btn-collapse-sidebar"
+            class="p-1.5 rounded-lg text-slate-400 hover:text-slate-800 hover:bg-slate-100 transition"
+            title="Esconder menu lateral (Ctrl+B)"
+          >
+            <i data-lucide="PanelLeftClose" class="w-4 h-4"></i>
+          </button>
         </div>
 
         <!-- Seletor de Território Compacto -->
@@ -202,23 +220,9 @@
         </nav>
       </div>
 
-      <!-- Rodapé da Sidebar: Status Cloud + Perfil do Acadêmico -->
-      <div class="p-3 border-t border-slate-200/80 space-y-2">
-        <!-- Botão Supabase Cloud -->
-        <button
-          type="button"
-          id="btn-supabase-config"
-          class="w-full px-3 py-2 rounded-xl border border-slate-200/90 bg-slate-50 hover:bg-slate-100 text-left flex items-center justify-between transition"
-        >
-          <div class="flex items-center gap-2">
-            <span id="supabase-status-dot" class="w-2 h-2 rounded-full bg-amber-500"></span>
-            <span id="supabase-status-text" class="text-[11px] font-medium text-slate-700">Banco: Híbrido</span>
-          </div>
-          <i data-lucide="Settings2" class="w-3.5 h-3.5 text-slate-400"></i>
-        </button>
-
-        <!-- Acadêmico Logado -->
-        <div class="flex items-center justify-between px-2 py-1.5">
+      <!-- Rodapé da Sidebar: Apenas Perfil do Acadêmico -->
+      <div class="p-3 border-t border-slate-200/80">
+        <div class="flex items-center justify-between px-2 py-1">
           <div class="min-w-0">
             <p id="header-student-name" class="text-xs font-semibold text-slate-900 truncate">Gabriel Cavalcante</p>
             <p class="text-[11px] text-slate-400 font-mono-code flex items-center gap-1.5">

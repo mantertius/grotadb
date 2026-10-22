@@ -1196,72 +1196,34 @@
       });
     });
 
-    // Configuração Supabase
-    document.getElementById("btn-supabase-config").addEventListener("click", () => {
-      const creds = window.SupabaseService
-        ? window.SupabaseService.getCredentials()
-        : { url: "", anonKey: "" };
+    // Recolher / Expandir Sidebar (Botões + Atalho Ctrl+B)
+    const sidebar = document.getElementById("app-sidebar");
+    const btnCollapse = document.getElementById("btn-collapse-sidebar");
+    const btnExpand = document.getElementById("btn-expand-sidebar");
 
-      openGenericModal(
-        "Configurar Banco Supabase Cloud",
-        `
-          <form id="form-supabase-creds" class="space-y-3">
-            <div>
-              <label class="block font-medium text-slate-600 mb-1">Supabase URL</label>
-              <input type="url" id="sb-url-input" placeholder="https://xyz.supabase.co" value="${creds.url}" class="w-full rounded-lg border border-slate-200 px-3 py-2 font-mono-code" />
-            </div>
-            <div>
-              <label class="block font-medium text-slate-600 mb-1">Anon Public Key</label>
-              <input type="text" id="sb-key-input" placeholder="eyJhbGci..." value="${creds.anonKey}" class="w-full rounded-lg border border-slate-200 px-3 py-2 font-mono-code" />
-            </div>
-            <div class="flex items-center justify-between pt-2">
-              <button type="button" id="btn-seed-supabase" class="px-3 py-2 rounded-xl border border-slate-200 font-semibold text-slate-700 hover:bg-slate-50">
-                Popular Dados Iniciais (Seed)
-              </button>
-              <button type="submit" class="px-4 py-2 rounded-xl bg-slate-900 text-white font-semibold">
-                Conectar
-              </button>
-            </div>
-          </form>
-        `
-      );
+    function setSidebarCollapsed(collapsed) {
+      if (!sidebar || !btnExpand) return;
+      if (collapsed) {
+        sidebar.classList.add("hidden");
+        btnExpand.classList.remove("hidden");
+      } else {
+        sidebar.classList.remove("hidden");
+        btnExpand.classList.add("hidden");
+      }
+    }
 
-      document.getElementById("form-supabase-creds").addEventListener("submit", async (ev) => {
+    if (btnCollapse) {
+      btnCollapse.addEventListener("click", () => setSidebarCollapsed(true));
+    }
+    if (btnExpand) {
+      btnExpand.addEventListener("click", () => setSidebarCollapsed(false));
+    }
+    document.addEventListener("keydown", (ev) => {
+      if ((ev.ctrlKey || ev.metaKey) && ev.key.toLowerCase() === "b") {
         ev.preventDefault();
-        const url = document.getElementById("sb-url-input").value.trim();
-        const key = document.getElementById("sb-key-input").value.trim();
-        if (!url || !key) {
-          window.SupabaseService.clearCredentials();
-          updateSupabaseBadge();
-          closeGenericModal();
-          return;
-        }
-        window.SupabaseService.saveCredentials(url, key);
-        updateSupabaseBadge();
-        await syncFromCloudIfAvailable();
-        closeGenericModal();
-      });
-
-      document.getElementById("btn-seed-supabase").addEventListener("click", async () => {
-        const url = document.getElementById("sb-url-input").value.trim();
-        const key = document.getElementById("sb-key-input").value.trim();
-        if (url && key) {
-          window.SupabaseService.saveCredentials(url, key);
-          updateSupabaseBadge();
-        }
-        if (!window.SupabaseService || !window.SupabaseService.isActive()) {
-          showToast("Informe URL e Key primeiro");
-          return;
-        }
-        try {
-          await window.SupabaseService.seedInitialDataToCloud(window.INITIAL_DATA);
-          await syncFromCloudIfAvailable();
-          closeGenericModal();
-          showToast("Banco Supabase populado com sucesso");
-        } catch (err) {
-          alert("Execute o supabase/schema.sql no SQL Editor antes de popular.\n" + (err.message || ""));
-        }
-      });
+        const isHidden = sidebar && sidebar.classList.contains("hidden");
+        setSidebarCollapsed(!isHidden);
+      }
     });
 
     document.getElementById("btn-close-generic-modal").addEventListener("click", closeGenericModal);
@@ -1275,19 +1237,6 @@
       refreshAllViews();
       showToast("Dados restaurados");
     });
-  }
-
-  function updateSupabaseBadge() {
-    const dot = document.getElementById("supabase-status-dot");
-    const txt = document.getElementById("supabase-status-text");
-    if (!dot || !txt) return;
-    if (window.SupabaseService && window.SupabaseService.isActive()) {
-      dot.className = "w-2 h-2 rounded-full bg-emerald-500";
-      txt.textContent = "Supabase: Conectado";
-    } else {
-      dot.className = "w-2 h-2 rounded-full bg-amber-500";
-      txt.textContent = "Banco: Híbrido";
-    }
   }
 
   async function syncFromCloudIfAvailable() {
@@ -1314,7 +1263,6 @@
   document.addEventListener("DOMContentLoaded", () => {
     if (window.SupabaseService) window.SupabaseService.initClient();
     initEvents();
-    updateSupabaseBadge();
     refreshAllViews();
     evaluateVitalSignsAlert();
     syncFromCloudIfAvailable();
