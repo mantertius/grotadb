@@ -922,37 +922,111 @@
     document.getElementById("btn-cancel-drawer").addEventListener("click", closeConsultationDrawer);
     document.getElementById("drawer-backdrop").addEventListener("click", closeConsultationDrawer);
 
+    const udaTemplates = {
+      has: {
+        bp: "156/94",
+        glycemia: "192",
+        hr: "84",
+        temp: "36.5",
+        cids: ["I10", "E11"],
+        complaint: "Cefaleia occipital leve e dificuldade de buscar anti-hipertensivo por escadaria íngreme na Grota.",
+        conduct: "Ajuste de Losartana 50mg 12/12h + Metformina 850mg, solicitação de HbA1c/Creatinina na UDA UNIMA Afya e inclusão na entrega domiciliar."
+      },
+      dengue: {
+        bp: "110/70",
+        glycemia: "94",
+        hr: "98",
+        temp: "38.5",
+        cids: ["A90"],
+        complaint: "Febre de início súbito (38.5°C) há 48h, mialgia intensa e dor retro-orbitária. Foco de água parada próximo à residência.",
+        conduct: "Notificação SINAN realizada, prova do laço negativa, hidratação oral vigorosa (60mL/kg/dia), Dipirona 1g SOS e retorno em 48h para hemograma."
+      },
+      parasitose: {
+        bp: "105/68",
+        glycemia: "88",
+        hr: "86",
+        temp: "37.1",
+        cids: ["B82", "A09"],
+        complaint: "Dor abdominal periumbilical em cólica, hiporexia e diarreia intermitente. Consumo de água de caixa sem filtro.",
+        conduct: "Prescrição de Albendazol 400mg + Sais de Reidratação Oral, solicitação de EPF e orientação de hipoclorito de sódio."
+      },
+      asma: {
+        bp: "118/76",
+        glycemia: "92",
+        hr: "96",
+        temp: "36.7",
+        cids: ["J45"],
+        complaint: "Dispneia aos médios esforços, tosse seca noturna e sibilância difusa. Residência com infiltração e mofo acentuado.",
+        conduct: "Salbutamol spray 100mcg (resgate) + Budesonida inalatória contínua, revisão da técnica inalatória e orientação de ventilação domiciliar."
+      },
+      prenatal: {
+        bp: "116/74",
+        glycemia: "84",
+        hr: "88",
+        temp: "36.5",
+        cids: ["Z34"],
+        complaint: "Consulta de rotina Pré-Natal (2º trimestre). Movimentação fetal presente, sem perdas vaginais ou queixas urinárias.",
+        conduct: "BCF 144 bpm, AU compatível. Mantido Sulfato Ferroso + Ácido Fólico, solicitado TOTG-75g e sorologias de 2º trimestre na UDA."
+      },
+      mental: {
+        bp: "132/84",
+        glycemia: "96",
+        hr: "92",
+        temp: "36.4",
+        cids: ["F41"],
+        complaint: "Insônia inicial, palpitações, choro fácil e sobrecarga emocional associada à vulnerabilidade financeira familiar.",
+        conduct: "Escuta qualificada na UDA, manejo não farmacológico do sono, início de ISRS (Fluoxetina 20mg/dia) e encaminhamento para roda interprofissional com Psicologia UNIMA."
+      },
+      dermato: {
+        bp: "120/78",
+        glycemia: "91",
+        hr: "78",
+        temp: "36.6",
+        cids: ["B35"],
+        complaint: "Lesões papulovesiculares intensamente pruriginosas em espaços interdigitais e abdome, com piora noturna (coabitantes com sintomas semelhantes).",
+        conduct: "Permetrina loção 5% tópica (aplicar no paciente e contactantes domiciliares, repetir em 7 dias), anti-histamínico oral e higienização de roupas de cama."
+      },
+      pediabetico: {
+        bp: "148/90",
+        glycemia: "226",
+        hr: "82",
+        temp: "36.5",
+        cids: ["E11", "E66", "I10"],
+        complaint: "Retorno para rastreio de pé diabético e controle metabólico. Relata parestesia em bota em membros inferiores.",
+        conduct: "Teste com monofilamento 10g Semmes-Weinstein, pulsos pediosos presentes, orientação de calçado fechado e ajuste de Gliclazida 60mg + encaminhamento à Nutrição UDA."
+      },
+      puericultura: {
+        bp: "96/60",
+        glycemia: "85",
+        hr: "104",
+        temp: "36.6",
+        cids: ["B82", "J45"],
+        complaint: "Avaliação de crescimento e desenvolvimento infantil na UDA. Caderneta vacinal verificada; mãe relata apetite seletivo e tosse ocasional.",
+        conduct: "Curvas de peso e estatura adequadas na caderneta da criança, suplementação profilática de micronutrientes, vermifugação e atualização vacinal."
+      },
+      visita: {
+        bp: "152/92",
+        glycemia: "168",
+        hr: "76",
+        temp: "36.3",
+        cids: ["I10", "E11"],
+        complaint: "Visita domiciliar realizada pela equipe de acadêmicos na encosta/escadaria. Paciente idoso restrito ao domicílio por limitação osteoarticular.",
+        conduct: "Reconciliação medicamentosa em domicílio, organização de caixa organizadora semanal por turnos para a família e agendamento de coleta laboratorial domiciliar."
+      }
+    };
+
     document.querySelectorAll(".tpl-btn").forEach((btn) => {
       btn.addEventListener("click", () => {
-        const tpl = btn.getAttribute("data-tpl");
-        if (tpl === "has") {
-          document.getElementById("att-bp").value = "156/94";
-          document.getElementById("att-glycemia").value = "192";
-          document.getElementById("att-temp").value = "36.5";
-          selectedFormCids = new Set(["I10", "E11"]);
-          document.getElementById("att-complaint").value =
-            "Cefaleia leve e dificuldade de buscar anti-hipertensivo por escadaria íngreme.";
-          document.getElementById("att-conduct").value =
-            "Ajuste de Losartana 50mg + Metformina 850mg, solicitação de HbA1c na UDA e inclusão na entrega domiciliar.";
-        } else if (tpl === "dengue") {
-          document.getElementById("att-bp").value = "110/70";
-          document.getElementById("att-glycemia").value = "94";
-          document.getElementById("att-temp").value = "38.5";
-          selectedFormCids = new Set(["A90"]);
-          document.getElementById("att-complaint").value =
-            "Febre de início súbito (38.5°C), mialgia, dor retro-orbitária. Foco de água parada próximo à residência.";
-          document.getElementById("att-conduct").value =
-            "Notificação SINAN, hidratação oral vigorosa (60mL/kg/dia), Dipirona SOS e retorno em 48h para hemograma.";
-        } else if (tpl === "parasitose") {
-          document.getElementById("att-bp").value = "105/68";
-          document.getElementById("att-glycemia").value = "88";
-          document.getElementById("att-temp").value = "37.1";
-          selectedFormCids = new Set(["B82", "A09"]);
-          document.getElementById("att-complaint").value =
-            "Dor abdominal cólica e diarreia intermitente. Consumo de água sem filtração adequada.";
-          document.getElementById("att-conduct").value =
-            "Prescrição de Albendazol 400mg + Sais de Reidratação Oral e entrega de hipoclorito de sódio.";
-        }
+        const tplKey = btn.getAttribute("data-tpl");
+        const tpl = udaTemplates[tplKey];
+        if (!tpl) return;
+        document.getElementById("att-bp").value = tpl.bp;
+        document.getElementById("att-glycemia").value = tpl.glycemia;
+        document.getElementById("att-hr").value = tpl.hr;
+        document.getElementById("att-temp").value = tpl.temp;
+        selectedFormCids = new Set(tpl.cids);
+        document.getElementById("att-complaint").value = tpl.complaint;
+        document.getElementById("att-conduct").value = tpl.conduct;
         renderCidSelectorChips();
         evaluateVitalSignsAlert();
       });
