@@ -734,7 +734,7 @@
 
   function exportAnonymizedJson() {
     const dataset = {
-      platform: "VigIA - UDA UNIMA Afya",
+      platform: "GrotaDB - UDA UNIMA Afya",
       exportedAt: new Date().toISOString(),
       lgpdCompliance: "Art. 12 - Dados Anonimizados",
       records: state.patients.map(buildAnonymizedRecord)

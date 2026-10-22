@@ -1,4 +1,4 @@
-# Roteiro de Pitch de 3 Minutos + Estrutura de Slides — VigIA (Acelera Periferia)
+# Roteiro de Pitch de 3 Minutos + Estrutura de Slides — GrotaDB (Acelera Periferia)
 
 > **Posicionamento Estratégico contra os Concorrentes:**  
 > Enquanto 90% das equipes do hackathon vão apresentar **projetos assistencialistas ou ONGs** que dependem de doação ou verba pública para sobreviver, você vai apresentar uma **HealthTech & Data-as-a-Service Startup altamente lucrativa e escalável**, onde **o impacto social financia o negócio e o negócio financia a periferia**.
@@ -15,7 +15,7 @@ Fundo escuro minimalista. Uma frase grande: *"A indústria farmacêutica gasta R
 
 **O que você fala (Tom firme, olhando para os jurados):**
 > "Boa noite. Hoje vocês vão ver vários projetos sociais incríveis aqui no Acelera Periferia. Mas quase todos têm o mesmo problema fatal: **quando o edital acaba, o dinheiro acaba, e o projeto morre**.  
-> Nós não viemos apresentar uma ONG. Nós criamos a **VigIA**: uma startup de inteligência epidemiológica que transforma o maior ativo invisível das faculdades de medicina em políticas públicas para as grotas — e em um negócio de dados recorrente e milionário."
+> Nós não viemos apresentar uma ONG. Nós criamos o **GrotaDB**: uma startup de inteligência epidemiológica que transforma o maior ativo invisível das faculdades de medicina em políticas públicas para as grotas — e em um negócio de dados recorrente e milionário."
 
 ---
 
@@ -32,10 +32,10 @@ Foto/Mapa da Grota do Rafael e Grota do Arroz + Ícone da UDA UNIMA | Afya. Trê
 
 ### SLIDE 3 — A Solução Ao Vivo: O Produto em Ação (1:05 a 1:50 — 45 seg)
 **Visual no Slide:**  
-**Tela do sistema VigIA aberta ao vivo** (ou print da tela limpa de Prontuário + Gaveta de Atendimento).
+**Tela do sistema GrotaDB aberta ao vivo** (ou print da tela limpa de Prontuário + Gaveta de Atendimento).
 
 **O que você fala (Mostrando a tela):**
-> "O **VigIA** resolve isso na raiz. O nosso usuário principal é o **acadêmico de medicina**, que já está lá obrigatoriamente todo semestre pelo currículo do MEC.  
+> "O **GrotaDB** resolve isso na raiz. O nosso usuário principal é o **acadêmico de medicina**, que já está lá obrigatoriamente todo semestre pelo currículo do MEC.  
 > Ele entra com sua **matrícula da UNIMA Afya** e, aplicando a regra médica dos 90 segundos, cadastra o morador e registra o atendimento com **templates de 1 clique** focado nas patologias reais da comunidade: Hipertensão, Diabetes, Dengue, Parasitoses e Saúde Mental — cruzando cada diagnóstico com o saneamento e a microárea da grota.  
 > No mesmo segundo, o sistema gera nosso **Observatório de Políticas Públicas**, entregando mastigado para a Prefeitura onde canalizar esgoto e onde entregar remédio em casa."
 
@@ -58,7 +58,7 @@ Diagrama simples de 3 blocos:
 
 ### SLIDE 5 — Fechamento com "Gostinho de Quero Mais" (2:35 a 3:00 — 25 seg)
 **Visual no Slide:**  
-QR Code grande apontando para o seu link da Vercel (`vigia-grotas.vercel.app`) + Frase final: **"VigIA: Onde cada aula prática vira política pública e cada dado anônimo financia a saúde da periferia."**
+QR Code grande apontando para o seu link ao vivo + Frase final: **"GrotaDB: Onde cada aula prática vira política pública e cada dado anônimo financia a saúde da periferia."**
 
 **O que você fala (Pausa dramática antes da última frase):**
 > "O nosso MVP já está 100% funcional, em nuvem, com banco de dados real e motor de exportação B2B rodando agora mesmo no QR Code aí na tela.  

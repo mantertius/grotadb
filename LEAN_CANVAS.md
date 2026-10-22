@@ -1,6 +1,6 @@
-# Lean Canvas — VigIA (Hackathon Acelera Periferia)
+# Lean Canvas — GrotaDB (Hackathon Acelera Periferia)
 
-**Produto:** VigIA — Prontuário Docente-Assistencial & Inteligência Epidemiológica Periférica  
+**Produto:** GrotaDB — Prontuário Docente-Assistencial & Inteligência Epidemiológica Periférica  
 **Unidade Piloto (Early Adopter):** UNIMA | Afya (Maceió - AL) • Territórios: Grota do Rafael e Grota do Arroz
 
 ---

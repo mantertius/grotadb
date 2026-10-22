@@ -1,4 +1,4 @@
-# VigIA Grotas | UDA UNIMA Afya — Hackathon Acelera Periferia
+# GrotaDB | UDA UNIMA Afya — Hackathon Acelera Periferia
 
 Sistema Docente-Assistencial de **Prontuário Eletrônico Comunitário**, **Inteligência para Políticas Públicas** e **Marketplace Ético de Dados Anonimizados (RWE)** focado inicialmente nos moradores atendidos pelas UDAs da **UNIMA | Afya (Maceió - AL)** provenientes da **Grota do Rafael** e da **Grota do Arroz**.
 
