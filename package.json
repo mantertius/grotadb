@@ -1,0 +1,11 @@
+{
+  "name": "vigia-grotas-unima-afya",
+  "version": "1.0.0",
+  "description": "Sistema de Prontuário Eletrônico UDA UNIMA Afya, Políticas Públicas para as Grotas (Rafael e Arroz) e Marketplace de Dados Anonimizados (Hackathon Acelera Periferia)",
+  "private": true,
+  "scripts": {
+    "start": "npx serve . -l 3000",
+    "dev": "npx serve . -l 3000",
+    "deploy": "npx vercel --prod"
+  }
+}

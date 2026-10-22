@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VigIA — Prontuário & Inteligência Epidemiológica | UNIMA Afya</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="h-screen overflow-hidden flex flex-col bg-slate-50 text-slate-900">
+
+  <!-- ======================================================================= -->
+  <!-- TELA DE LOGIN MINIMALISTA (ESTILO LINEAR / AFYA ICLINIC)                -->
+  <!-- ======================================================================= -->
+  <div id="login-screen" class="fixed inset-0 z-50 bg-dot-grid flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-xl shadow-slate-900/5 border border-slate-200/90 max-w-md w-full p-7 sm:p-8">
+      
+      <!-- Header do Produto -->
+      <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-slate-900 text-white flex items-center justify-center">
+            <i data-lucide="Activity" class="w-4 h-4"></i>
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-base tracking-tight text-slate-900">VigIA</span>
+              <span class="text-[11px] font-semibold px-2 py-0.5 rounded-md bg-rose-50 text-rose-600 border border-rose-200/80">
+                UNIMA | Afya
+              </span>
+            </div>
+            <p class="text-xs text-slate-500">Prontuário UDA & Inteligência Territorial</p>
+          </div>
+        </div>
+        <button
+          type="button"
+          id="btn-quick-demo"
+          class="text-xs font-medium text-slate-500 hover:text-slate-900 px-2.5 py-1 rounded-lg border border-slate-200 hover:bg-slate-50 transition"
+          title="Alternar perfil de acadêmico"
+        >
+          Trocar Perfil
+        </button>
+      </div>
+
+      <form id="login-form" class="space-y-4">
+        <div>
+          <label class="block text-xs font-medium text-slate-600 mb-1">Instituição / Unidade Docente</label>
+          <select id="login-institution" class="w-full rounded-xl border border-slate-200 bg-slate-50/70 px-3 py-2 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-white">
+            <option value="UNIMA | Afya — Maceió/AL" selected>UNIMA | Afya — UDA Maceió/AL</option>
+            <option value="UNIGRANRIO | Afya — Caxias/RJ">UNIGRANRIO | Afya — Caxias/RJ</option>
+            <option value="UNIPTAN | Afya — Minas Gerais">UNIPTAN | Afya — Minas Gerais</option>
+            <option value="UFAL / UNCISAL — Alagoas">UFAL / UNCISAL — Rede Conveniada</option>
+          </select>
+        </div>
+
+        <div class="grid grid-cols-5 gap-3">
+          <div class="col-span-2">
+            <label class="block text-xs font-medium text-slate-600 mb-1">Matrícula (RA)</label>
+            <input
+              type="text"
+              id="login-matricula"
+              required
+              value="202310845"
+              placeholder="202310845"
+              class="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs font-mono-code font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900"
+            />
+          </div>
+          <div class="col-span-3">
+            <label class="block text-xs font-medium text-slate-600 mb-1">Acadêmico(a) de Medicina</label>
+            <input
+              type="text"
+              id="login-name"
+              required
+              value="Gabriel Cavalcante"
+              class="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900"
+            />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Ciclo</label>
+            <select id="login-period" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900">
+              <option value="9º Período • Internato MFC" selected>9º Período (Internato)</option>
+              <option value="10º Período • Clínica Médica">10º Período (Clínica)</option>
+              <option value="11º Período • Pediatria/GO">11º Período (Ped/GO)</option>
+              <option value="Ambulatório UDA">5º–8º Período (UDA)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Território de Atuação</label>
+            <select id="login-territory" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900">
+              <option value="Todas" selected>Ambas as Grotas</option>
+              <option value="Grota do Rafael">Grota do Rafael</option>
+              <option value="Grota do Arroz">Grota do Arroz</option>
+            </select>
+          </div>
+        </div>
+
+        <input type="hidden" id="login-preceptor" value="Dra. Helena Vasconcelos (CRM-AL 6842)" />
+
+        <button
+          type="submit"
+          class="w-full bg-slate-900 hover:bg-slate-800 text-white font-semibold py-2.5 px-4 rounded-xl text-xs transition flex items-center justify-center gap-2 shadow-sm mt-2"
+        >
+          <span>Acessar Workspace Clínico</span>
+          <i data-lucide="ArrowRight" class="w-3.5 h-3.5"></i>
+        </button>
+      </form>
+
+      <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-400">
+        <span>Grota do Rafael • Grota do Arroz</span>
+        <span class="flex items-center gap-1 text-emerald-600 font-medium">
+          <i data-lucide="ShieldCheck" class="w-3.5 h-3.5"></i> LGPD Anonimizado
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================= -->
+  <!-- APP SHELL: SIDEBAR FIXA + WORKSPACE LIMPO                               -->
+  <!-- ======================================================================= -->
+  <div class="flex-1 flex overflow-hidden">
+
+    <!-- SIDEBAR ESQUERDA -->
+    <aside class="w-60 bg-white border-r border-slate-200/90 flex flex-col justify-between shrink-0 no-print">
+      
+      <!-- Topo da Sidebar -->
+      <div class="p-4 space-y-5">
+        <!-- Brand -->
+        <div class="flex items-center justify-between px-1">
+          <div class="flex items-center gap-2.5">
+            <div class="w-7 h-7 rounded-lg bg-slate-900 text-white flex items-center justify-center">
+              <i data-lucide="Activity" class="w-3.5 h-3.5"></i>
+            </div>
+            <div>
+              <div class="flex items-center gap-1.5">
+                <span class="font-bold text-sm text-slate-900 tracking-tight">VigIA</span>
+                <span id="header-institution-badge" class="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-rose-50 text-rose-600 border border-rose-200/70">
+                  UNIMA Afya
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Seletor de Território Compacto -->
+        <div class="bg-slate-100/80 p-1 rounded-xl grid grid-cols-3 gap-0.5 text-[11px]">
+          <button type="button" data-territory="Todas" class="territory-filter-btn py-1.5 rounded-lg font-semibold bg-white text-slate-900 shadow-sm">
+            Todas
+          </button>
+          <button type="button" data-territory="Grota do Rafael" class="territory-filter-btn py-1.5 rounded-lg font-medium text-slate-500 hover:text-slate-900">
+            G. Rafael
+          </button>
+          <button type="button" data-territory="Grota do Arroz" class="territory-filter-btn py-1.5 rounded-lg font-medium text-slate-500 hover:text-slate-900">
+            G. Arroz
+          </button>
+        </div>
+
+        <!-- Menu Principal (4 Itens Diretos) -->
+        <nav class="space-y-1">
+          <button
+            type="button"
+            data-tab="tab-pep"
+            class="nav-tab sidebar-link active w-full px-3 py-2 rounded-xl text-xs font-semibold flex items-center justify-between"
+          >
+            <span class="flex items-center gap-2.5">
+              <i data-lucide="Users" class="w-4 h-4"></i>
+              Prontuários UDA
+            </span>
+            <span id="badge-patients-count" class="text-[11px] font-mono-code opacity-80">8</span>
+          </button>
+
+          <button
+            type="button"
+            data-tab="tab-public-policy"
+            class="nav-tab sidebar-link w-full px-3 py-2 rounded-xl text-xs font-semibold flex items-center gap-2.5"
+          >
+            <i data-lucide="BarChart2" class="w-4 h-4"></i>
+            Políticas Públicas
+          </button>
+
+          <button
+            type="button"
+            data-tab="tab-b2b-scale"
+            class="nav-tab sidebar-link w-full px-3 py-2 rounded-xl text-xs font-semibold flex items-center gap-2.5"
+          >
+            <i data-lucide="Database" class="w-4 h-4"></i>
+            Data Hub B2B
+          </button>
+
+          <button
+            type="button"
+            data-tab="tab-scale"
+            class="nav-tab sidebar-link w-full px-3 py-2 rounded-xl text-xs font-semibold flex items-center gap-2.5"
+          >
+            <i data-lucide="Building2" class="w-4 h-4"></i>
+            Escala Faculdades
+          </button>
+        </nav>
+      </div>
+
+      <!-- Rodapé da Sidebar: Status Cloud + Perfil do Acadêmico -->
+      <div class="p-3 border-t border-slate-200/80 space-y-2">
+        <!-- Botão Supabase Cloud -->
+        <button
+          type="button"
+          id="btn-supabase-config"
+          class="w-full px-3 py-2 rounded-xl border border-slate-200/90 bg-slate-50 hover:bg-slate-100 text-left flex items-center justify-between transition"
+        >
+          <div class="flex items-center gap-2">
+            <span id="supabase-status-dot" class="w-2 h-2 rounded-full bg-amber-500"></span>
+            <span id="supabase-status-text" class="text-[11px] font-medium text-slate-700">Banco: Híbrido</span>
+          </div>
+          <i data-lucide="Settings2" class="w-3.5 h-3.5 text-slate-400"></i>
+        </button>
+
+        <!-- Acadêmico Logado -->
+        <div class="flex items-center justify-between px-2 py-1.5">
+          <div class="min-w-0">
+            <p id="header-student-name" class="text-xs font-semibold text-slate-900 truncate">Gabriel Cavalcante</p>
+            <p class="text-[11px] text-slate-400 font-mono-code flex items-center gap-1.5">
+              <span id="header-student-matricula">RA 202310845</span>
+            </p>
+            <span id="header-student-period" class="hidden"></span>
+          </div>
+          <div class="flex items-center gap-1">
+            <button
+              type="button"
+              id="btn-reset-data"
+              class="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100"
+              title="Restaurar dados iniciais"
+            >
+              <i data-lucide="RotateCcw" class="w-3.5 h-3.5"></i>
+            </button>
+            <button
+              type="button"
+              id="btn-switch-user"
+              class="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100"
+              title="Trocar matrícula"
+            >
+              <i data-lucide="LogOut" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ===================================================================== -->
+    <!-- ÁREA PRINCIPAL DE CONTEÚDO                                            -->
+    <!-- ===================================================================== -->
+    <main class="flex-1 flex flex-col overflow-hidden">
+
+      <!-- =================================================================== -->
+      <!-- ABA 1: PRONTUÁRIOS UDA (SPLIT VIEW MESTRE-DETALHE SEM POLUIÇÃO)     -->
+      <!-- =================================================================== -->
+      <section id="tab-pep" class="tab-panel flex-1 flex overflow-hidden">
+        
+        <!-- COLUNA ESQUERDA: FILA DE PACIENTES (320px) -->
+        <div class="w-80 lg:w-96 bg-white border-r border-slate-200/90 flex flex-col shrink-0">
+          
+          <!-- Header da Lista + Busca -->
+          <div class="p-4 border-b border-slate-200/80 space-y-3">
+            <div class="flex items-center justify-between">
+              <div>
+                <h1 class="text-sm font-bold text-slate-900">Pacientes</h1>
+                <p id="patient-list-counter" class="text-[11px] text-slate-400">8 moradores</p>
+              </div>
+              <button
+                type="button"
+                id="btn-open-new-patient"
+                class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition shadow-sm"
+              >
+                <i data-lucide="Plus" class="w-3.5 h-3.5"></i>
+                Novo
+              </button>
+            </div>
+
+            <!-- Input de Busca Limpo -->
+            <div class="relative">
+              <i data-lucide="Search" class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+              <input
+                type="text"
+                id="search-patient-input"
+                placeholder="Buscar nome, CNS ou CID..."
+                class="w-full pl-8 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:bg-white focus:ring-2 focus:ring-slate-900"
+              />
+            </div>
+
+            <!-- Filtros Rápidos de Patologia -->
+            <div class="flex items-center gap-1 overflow-x-auto pb-0.5 text-[11px]">
+              <button type="button" data-pathology-filter="ALL" class="pat-filter-chip px-2 py-1 rounded-md font-semibold bg-slate-900 text-white whitespace-nowrap">
+                Todos
+              </button>
+              <button type="button" data-pathology-filter="I10" class="pat-filter-chip px-2 py-1 rounded-md font-medium bg-slate-100 text-slate-600 hover:bg-slate-200 whitespace-nowrap">
+                HAS (I10)
+              </button>
+              <button type="button" data-pathology-filter="E11" class="pat-filter-chip px-2 py-1 rounded-md font-medium bg-slate-100 text-slate-600 hover:bg-slate-200 whitespace-nowrap">
+                Diabetes (E11)
+              </button>
+              <button type="button" data-pathology-filter="A90" class="pat-filter-chip px-2 py-1 rounded-md font-medium bg-slate-100 text-slate-600 hover:bg-slate-200 whitespace-nowrap">
+                Dengue (A90)
+              </button>
+              <button type="button" data-pathology-filter="B82" class="pat-filter-chip px-2 py-1 rounded-md font-medium bg-slate-100 text-slate-600 hover:bg-slate-200 whitespace-nowrap">
+                Parasitose
+              </button>
+              <button type="button" data-pathology-filter="F41" class="pat-filter-chip px-2 py-1 rounded-md font-medium bg-slate-100 text-slate-600 hover:bg-slate-200 whitespace-nowrap">
+                Mental
+              </button>
+            </div>
+          </div>
+
+          <!-- Lista Rolável de Pacientes -->
+          <div id="patient-list-container" class="flex-1 overflow-y-auto divide-y divide-slate-100">
+            <!-- Preenchido via app.js -->
+          </div>
+        </div>
+
+        <!-- COLUNA DIREITA: PRONTUÁRIO DO PACIENTE SELECIONADO -->
+        <div class="flex-1 overflow-y-auto bg-slate-50/60 p-6">
+          <div id="selected-patient-card" class="max-w-4xl mx-auto">
+            <!-- Preenchido via app.js -->
+          </div>
+        </div>
+
+        <!-- KPIs ocultos usados por compatibilidade de script -->
+        <span id="kpi-pep-patients" class="hidden"></span>
+        <span id="kpi-pep-highrisk" class="hidden"></span>
+        <span id="kpi-pep-sanitation" class="hidden"></span>
+      </section>
+
+      <!-- =================================================================== -->
+      <!-- ABA 2: POLÍTICAS PÚBLICAS & EPIDEMIOLOGIA                           -->
+      <!-- =================================================================== -->
+      <section id="tab-public-policy" class="tab-panel hidden flex-1 overflow-y-auto p-6">
+        <div class="max-w-6xl mx-auto space-y-6">
+          
+          <!-- Header Limpo -->
+          <div class="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <h1 class="text-lg font-bold text-slate-900">Vigilância Epidemiológica & Políticas Públicas</h1>
+              <p class="text-xs text-slate-500">Indicadores em tempo real capturados na UDA UNIMA Afya • Grota do Rafael & Grota do Arroz</p>
+            </div>
+            <button
+              type="button"
+              id="btn-generate-policy-brief"
+              class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold px-4 py-2 rounded-xl flex items-center gap-2 shadow-sm transition"
+            >
+              <i data-lucide="FileText" class="w-3.5 h-3.5"></i>
+              Emitir Nota Técnica (PDF)
+            </button>
+          </div>
+
+          <!-- 4 KPIs Minimalistas -->
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="bg-white p-4 rounded-2xl border border-slate-200/90">
+              <span class="text-xs text-slate-500 font-medium">Pacientes Monitorados</span>
+              <p id="epi-kpi-total" class="text-2xl font-bold text-slate-900 mt-1">8</p>
+              <span class="text-[11px] text-emerald-600 font-medium">100% georreferenciados</span>
+            </div>
+            <div class="bg-white p-4 rounded-2xl border border-slate-200/90">
+              <span class="text-xs text-slate-500 font-medium">Hipertensão / Diabetes</span>
+              <p id="epi-kpi-chronic" class="text-2xl font-bold text-slate-900 mt-1">62%</p>
+              <span class="text-[11px] text-rose-600 font-medium">Alto risco cardiovascular</span>
+            </div>
+            <div class="bg-white p-4 rounded-2xl border border-slate-200/90">
+              <span class="text-xs text-slate-500 font-medium">Déficit de Saneamento</span>
+              <p id="epi-kpi-sanitation" class="text-2xl font-bold text-slate-900 mt-1">75%</p>
+              <span class="text-[11px] text-amber-600 font-medium">Esgoto aberto / Vala</span>
+            </div>
+            <div class="bg-white p-4 rounded-2xl border border-slate-200/90">
+              <span class="text-xs text-slate-500 font-medium">Adesão Medicamentosa</span>
+              <p id="epi-kpi-adherence" class="text-2xl font-bold text-slate-900 mt-1">63%</p>
+              <span class="text-[11px] text-slate-500">Barreira: escadarias/ruptura</span>
+            </div>
+          </div>
+
+          <!-- Gráficos Lado a Lado -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+            <div class="lg:col-span-7 bg-white p-5 rounded-2xl border border-slate-200/90">
+              <div class="flex items-center justify-between mb-4">
+                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500">Prevalência por Patologia (CID-10)</h3>
+                <span class="text-[11px] text-slate-400">Grota do Rafael vs Grota do Arroz</span>
+              </div>
+              <div class="h-64">
+                <canvas id="chart-pathologies"></canvas>
+              </div>
+            </div>
+
+            <div class="lg:col-span-5 bg-white p-5 rounded-2xl border border-slate-200/90">
+              <div class="flex items-center justify-between mb-4">
+                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500">Exposição Sanitária</h3>
+                <span class="text-[11px] text-slate-400">Determinantes Sociais</span>
+              </div>
+              <div class="h-64">
+                <canvas id="chart-sanitation"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tabela Direta de Ações de Políticas Públicas -->
+          <div class="bg-white rounded-2xl border border-slate-200/90 overflow-hidden">
+            <div class="px-5 py-3.5 border-b border-slate-200/80 flex items-center justify-between">
+              <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500">Prioridades de Intervenção Territorial</h3>
+              <span class="text-[11px] text-slate-400">Baseado nos CIDs ativos</span>
+            </div>
+            <table class="w-full text-left border-collapse text-xs">
+              <thead>
+                <tr class="border-b border-slate-100 text-slate-400 font-medium">
+                  <th class="py-2.5 px-5">Território</th>
+                  <th class="py-2.5 px-5">Foco Epidemiológico</th>
+                  <th class="py-2.5 px-5">Intervenção Pública Sugerida</th>
+                  <th class="py-2.5 px-5">Impacto Esperado</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100 text-slate-700">
+                <tr>
+                  <td class="py-3 px-5 font-semibold text-slate-900">Grota do Rafael • Escadaria</td>
+                  <td class="py-3 px-5"><span class="px-2 py-0.5 rounded bg-rose-50 text-rose-700 font-mono-code font-semibold">I10 • E11</span></td>
+                  <td class="py-3 px-5">Entrega domiciliar de contínuos para idosos sem mobilidade</td>
+                  <td class="py-3 px-5 text-emerald-700 font-medium">-38% internações por AVC</td>
+                </tr>
+                <tr>
+                  <td class="py-3 px-5 font-semibold text-slate-900">Grota do Arroz • Baixada</td>
+                  <td class="py-3 px-5"><span class="px-2 py-0.5 rounded bg-amber-50 text-amber-700 font-mono-code font-semibold">A90 • B82</span></td>
+                  <td class="py-3 px-5">Mutirão de drenagem, hipoclorito e bloqueio vetorial</td>
+                  <td class="py-3 px-5 text-emerald-700 font-medium">Controle de surto em 72h</td>
+                </tr>
+                <tr>
+                  <td class="py-3 px-5 font-semibold text-slate-900">Ambas as Grotas</td>
+                  <td class="py-3 px-5"><span class="px-2 py-0.5 rounded bg-purple-50 text-purple-700 font-mono-code font-semibold">F41 • Z34</span></td>
+                  <td class="py-3 px-5">Roda interprofissional Pré-Natal + Saúde Mental na UDA</td>
+                  <td class="py-3 px-5 text-emerald-700 font-medium">100% cobertura pré-natal</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- =================================================================== -->
+      <!-- ABA 3: DATA HUB B2B (MARKETPLACE DE DADOS ANONIMIZADOS LGPD)        -->
+      <!-- =================================================================== -->
+      <section id="tab-b2b-scale" class="tab-panel hidden flex-1 overflow-y-auto p-6">
+        <div class="max-w-6xl mx-auto space-y-6">
+          
+          <!-- Header + Export Buttons -->
+          <div class="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <div class="flex items-center gap-2">
+                <h1 class="text-lg font-bold text-slate-900">Data Hub B2B — Real-World Evidence (RWE)</h1>
+                <span class="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-semibold">
+                  LGPD Art. 12 • k-Anonimato
+                </span>
+              </div>
+              <p class="text-xs text-slate-500">Licenciamento de coortes anonimizadas para indústria farmacêutica, pesquisa clínica e ESG</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <button
+                type="button"
+                id="btn-export-anonymized-csv"
+                class="bg-white hover:bg-slate-50 text-slate-800 border border-slate-200 text-xs font-semibold px-3.5 py-2 rounded-xl flex items-center gap-1.5 transition shadow-sm"
+              >
+                <i data-lucide="Download" class="w-3.5 h-3.5"></i>
+                Exportar CSV
+              </button>
+              <button
+                type="button"
+                id="btn-export-anonymized-json"
+                class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold px-3.5 py-2 rounded-xl flex items-center gap-1.5 transition shadow-sm"
+              >
+                <i data-lucide="Code2" class="w-3.5 h-3.5"></i>
+                API / JSON Anonimizado
+              </button>
+            </div>
+          </div>
+
+          <!-- Pipeline Visual Limpo: De Dado Clínico (UDA) para Dado Anonimizado (B2B) -->
+          <div class="bg-white rounded-2xl border border-slate-200/90 p-5">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500">Pipeline de Desidentificação Automática (Paciente Selecionado)</h3>
+              <span class="text-[11px] font-mono-code text-slate-400">SHA-256 + Generalização Etária</span>
+            </div>
+            <div id="visual-anonymizer-table" class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+              <!-- Preenchido dinamicamente por app.js -->
+            </div>
+            <!-- Mantidos ocultos para compatibilidade se necessário -->
+            <pre id="raw-data-preview" class="hidden"></pre>
+            <pre id="anon-data-preview" class="hidden"></pre>
+          </div>
+
+          <!-- Catálogo de Datasets Comerciais -->
+          <div>
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3">Datasets Disponíveis para Licenciamento</h3>
+            <div id="b2b-packages-grid" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <!-- Preenchido via app.js -->
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- =================================================================== -->
+      <!-- ABA 4: ESCALA FACULDADES (SAAS MULTI-TENANT)                        -->
+      <!-- =================================================================== -->
+      <section id="tab-scale" class="tab-panel hidden flex-1 overflow-y-auto p-6">
+        <div class="max-w-6xl mx-auto space-y-6">
+          
+          <div class="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <h1 class="text-lg font-bold text-slate-900">Escala Nacional — Rede Multi-Faculdades</h1>
+              <p class="text-xs text-slate-500">Modelo SaaS iniciando na UNIMA | Afya Maceió e escalável para qualquer curso de medicina com UDA</p>
+            </div>
+            <button
+              type="button"
+              id="btn-open-onboard-modal"
+              class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold px-4 py-2 rounded-xl flex items-center gap-2 shadow-sm transition"
+            >
+              <i data-lucide="Plus" class="w-3.5 h-3.5"></i>
+              Adicionar Faculdade (Tenant)
+            </button>
+          </div>
+
+          <!-- Resumo Financeiro SaaS + B2B -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div class="bg-white p-4 rounded-2xl border border-slate-200/90">
+              <span class="text-xs text-slate-500 font-medium">Receita Mensal Recorrente (MRR)</span>
+              <p class="text-2xl font-bold text-slate-900 mt-1">R$ 72.600</p>
+              <span class="text-[11px] text-emerald-600 font-medium">Mensalidades SaaS + Datasets B2B</span>
+            </div>
+            <div class="bg-white p-4 rounded-2xl border border-slate-200/90">
+              <span class="text-xs text-slate-500 font-medium">Cashback Social para as UDAs (20%)</span>
+              <p class="text-2xl font-bold text-teal-700 mt-1">R$ 14.520/mês</p>
+              <span class="text-[11px] text-slate-500">Insumos e medicamentos nas Grotas</span>
+            </div>
+            <div class="bg-white p-4 rounded-2xl border border-slate-200/90">
+              <span class="text-xs text-slate-500 font-medium">Mercado Endereçável no Brasil</span>
+              <p class="text-2xl font-bold text-slate-900 mt-1">389 Escolas</p>
+              <span class="text-[11px] text-rose-600 font-medium">+30 unidades só no grupo Afya</span>
+            </div>
+          </div>
+
+          <!-- Tabela de Faculdades -->
+          <div class="bg-white rounded-2xl border border-slate-200/90 overflow-hidden">
+            <table class="w-full text-left border-collapse text-xs">
+              <thead>
+                <tr class="border-b border-slate-200/80 text-slate-400 font-medium bg-slate-50/50">
+                  <th class="py-3 px-5">Instituição</th>
+                  <th class="py-3 px-5">Comunidades Atendidas</th>
+                  <th class="py-3 px-5">Acadêmicos</th>
+                  <th class="py-3 px-5">Prontuários</th>
+                  <th class="py-3 px-5">Assinatura SaaS</th>
+                  <th class="py-3 px-5">Status</th>
+                </tr>
+              </thead>
+              <tbody id="saas-institutions-tbody" class="divide-y divide-slate-100 text-slate-700">
+                <!-- Preenchido via app.js -->
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ======================================================================= -->
+  <!-- SLIDE-OVER DRAWER: NOVO ATENDIMENTO CLÍNICO (ACIONADO SOB DEMANDA)      -->
+  <!-- ======================================================================= -->
+  <div id="drawer-consultation" class="fixed inset-0 z-40 hidden">
+    <div id="drawer-backdrop" class="fixed inset-0 bg-slate-900/40 backdrop-blur-[1px]"></div>
+    <div class="fixed inset-y-0 right-0 max-w-lg w-full bg-white shadow-2xl border-l border-slate-200 z-50 flex flex-col">
+      
+      <!-- Header do Drawer -->
+      <div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+        <div>
+          <h3 class="font-bold text-sm text-slate-900">Novo Atendimento Clínico</h3>
+          <p id="drawer-patient-subtitle" class="text-xs text-slate-500">Paciente selecionado</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <span id="form-student-stamp" class="font-mono-code text-[11px] bg-slate-100 px-2 py-0.5 rounded text-slate-600">
+            RA 202310845
+          </span>
+          <button type="button" id="btn-close-drawer" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100">
+            <i data-lucide="X" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Corpo do Formulário -->
+      <form id="consultation-form" class="flex-1 overflow-y-auto p-6 space-y-5">
+        
+        <!-- Preenchimento Rápido 1-Clique (Reduz carga cognitiva do acadêmico) -->
+        <div>
+          <span class="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1.5">Preenchimento Rápido (Templates UDA)</span>
+          <div class="flex flex-wrap gap-1.5">
+            <button type="button" data-tpl="has" class="tpl-btn text-[11px] font-medium px-2.5 py-1 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-700">
+              + Retorno HAS / Diabetes
+            </button>
+            <button type="button" data-tpl="dengue" class="tpl-btn text-[11px] font-medium px-2.5 py-1 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-700">
+              + Suspeita Arbovirose
+            </button>
+            <button type="button" data-tpl="parasitose" class="tpl-btn text-[11px] font-medium px-2.5 py-1 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-700">
+              + Parasitose / Hídrica
+            </button>
+          </div>
+        </div>
+
+        <!-- Sinais Vitais -->
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <label class="text-xs font-semibold text-slate-700">Sinais Vitais</label>
+            <span id="vital-clinical-alert" class="text-[11px] font-medium text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md">
+              Estável
+            </span>
+          </div>
+          <div class="grid grid-cols-5 gap-2">
+            <div>
+              <label class="block text-[10px] font-medium text-slate-400 mb-1">PA (mmHg)</label>
+              <input type="text" id="att-bp" required value="138/88" class="w-full rounded-lg border border-slate-200 px-2.5 py-1.5 text-xs font-mono-code font-semibold" />
+            </div>
+            <div>
+              <label class="block text-[10px] font-medium text-slate-400 mb-1">Glicemia</label>
+              <input type="number" id="att-glycemia" required value="118" class="w-full rounded-lg border border-slate-200 px-2.5 py-1.5 text-xs font-mono-code font-semibold" />
+            </div>
+            <div>
+              <label class="block text-[10px] font-medium text-slate-400 mb-1">FC (bpm)</label>
+              <input type="number" id="att-hr" value="80" class="w-full rounded-lg border border-slate-200 px-2.5 py-1.5 text-xs font-mono-code" />
+            </div>
+            <div>
+              <label class="block text-[10px] font-medium text-slate-400 mb-1">Temp (°C)</label>
+              <input type="number" step="0.1" id="att-temp" value="36.6" class="w-full rounded-lg border border-slate-200 px-2.5 py-1.5 text-xs font-mono-code" />
+            </div>
+            <div>
+              <label class="block text-[10px] font-medium text-slate-400 mb-1">Peso (kg)</label>
+              <input type="number" step="0.1" id="att-weight" value="72.0" class="w-full rounded-lg border border-slate-200 px-2.5 py-1.5 text-xs font-mono-code" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Seleção de CID-10 -->
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-2">Diagnóstico / Condição (CID-10)</label>
+          <div id="cid-selector-grid" class="grid grid-cols-2 gap-1.5">
+            <!-- Preenchido via app.js -->
+          </div>
+        </div>
+
+        <!-- SOAP Simplificado -->
+        <div class="space-y-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Evolução / Queixa Principal (S/O)</label>
+            <textarea
+              id="att-complaint"
+              rows="3"
+              required
+              placeholder="Descreva os sintomas e achados do exame físico..."
+              class="w-full rounded-xl border border-slate-200 p-3 text-xs focus:outline-none focus:ring-2 focus:ring-slate-900"
+            ></textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Conduta & Prescrição (A/P)</label>
+            <textarea
+              id="att-conduct"
+              rows="3"
+              required
+              placeholder="Prescrição, exames solicitados na UDA e orientações..."
+              class="w-full rounded-xl border border-slate-200 p-3 text-xs focus:outline-none focus:ring-2 focus:ring-slate-900"
+            ></textarea>
+          </div>
+        </div>
+
+        <div class="pt-3 border-t border-slate-100 flex items-center justify-end gap-2">
+          <button
+            type="button"
+            id="btn-cancel-drawer"
+            class="px-4 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-50"
+          >
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            class="px-5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold shadow-sm"
+          >
+            Finalizar Atendimento
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ======================================================================= -->
+  <!-- MODAL: CADASTRAR NOVO MORADOR                                           -->
+  <!-- ======================================================================= -->
+  <div id="modal-new-patient" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-[1px] hidden items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-slate-200 overflow-hidden">
+      <div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+        <h3 class="font-bold text-sm text-slate-900">Novo Paciente da Comunidade</h3>
+        <button type="button" id="btn-close-new-patient" class="p-1 rounded-lg hover:bg-slate-100 text-slate-400">
+          <i data-lucide="X" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <form id="new-patient-form" class="p-6 space-y-4 text-xs">
+        <div class="grid grid-cols-3 gap-3">
+          <div class="col-span-2">
+            <label class="block font-medium text-slate-600 mb-1">Nome Completo *</label>
+            <input type="text" id="np-name" required placeholder="Nome do morador" class="w-full rounded-lg border border-slate-200 px-3 py-2" />
+          </div>
+          <div>
+            <label class="block font-medium text-slate-600 mb-1">Cartão SUS (CNS)</label>
+            <input type="text" id="np-cns" required value="704.9912.3401.8821" class="w-full rounded-lg border border-slate-200 px-3 py-2 font-mono-code" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-3">
+          <div>
+            <label class="block font-medium text-slate-600 mb-1">Idade *</label>
+            <input type="number" id="np-age" required placeholder="45" class="w-full rounded-lg border border-slate-200 px-3 py-2" />
+          </div>
+          <div>
+            <label class="block font-medium text-slate-600 mb-1">Sexo</label>
+            <select id="np-sex" class="w-full rounded-lg border border-slate-200 px-3 py-2">
+              <option value="F">Feminino</option>
+              <option value="M">Masculino</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-medium text-slate-600 mb-1">Risco</label>
+            <select id="np-risk" class="w-full rounded-lg border border-slate-200 px-3 py-2">
+              <option value="Moderado">Moderado</option>
+              <option value="Alto">Alto</option>
+              <option value="Baixo">Baixo</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-medium text-slate-600 mb-1">Comunidade</label>
+            <select id="np-community" class="w-full rounded-lg border border-slate-200 px-3 py-2">
+              <option value="Grota do Rafael">Grota do Rafael</option>
+              <option value="Grota do Arroz">Grota do Arroz</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-medium text-slate-600 mb-1">Microárea / Escadaria</label>
+            <input type="text" id="np-microarea" required value="Microárea 02 - Encosta" class="w-full rounded-lg border border-slate-200 px-3 py-2" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-medium text-slate-600 mb-1">Saneamento</label>
+            <select id="np-sanitation" class="w-full rounded-lg border border-slate-200 px-3 py-2">
+              <option value="Esgoto a céu aberto próximo">Esgoto a céu aberto</option>
+              <option value="Vala aberta / Alagamento em dias de chuva">Vala aberta / Alagamento</option>
+              <option value="Fossa rudimentar">Fossa rudimentar</option>
+              <option value="Rede coletora regular">Rede coletora regular</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-medium text-slate-600 mb-1">Água</label>
+            <select id="np-water" class="w-full rounded-lg border border-slate-200 px-3 py-2">
+              <option value="Intermitente (Caixa d'água sem filtro)">Intermitente (Sem filtro)</option>
+              <option value="Água encanada irregular">Encanada irregular</option>
+              <option value="Água encanada regular">Encanada regular</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-medium text-slate-600 mb-1">Medicamentos Contínuos</label>
+          <input type="text" id="np-meds" placeholder="Ex: Losartana 50mg, Metformina 850mg" class="w-full rounded-lg border border-slate-200 px-3 py-2" />
+        </div>
+
+        <div class="pt-3 flex justify-end gap-2 border-t border-slate-100">
+          <button type="button" id="btn-cancel-new-patient" class="px-4 py-2 rounded-xl border border-slate-200 font-semibold text-slate-600">
+            Cancelar
+          </button>
+          <button type="submit" class="px-4 py-2 rounded-xl bg-slate-900 text-white font-semibold">
+            Salvar Paciente
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ======================================================================= -->
+  <!-- MODAL GENÉRICO                                                          -->
+  <!-- ======================================================================= -->
+  <div id="modal-generic" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-[1px] hidden items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-xl w-full shadow-2xl border border-slate-200 overflow-hidden">
+      <div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+        <h3 id="modal-generic-title" class="font-bold text-sm text-slate-900">Detalhes</h3>
+        <button type="button" id="btn-close-generic-modal" class="p-1 rounded-lg hover:bg-slate-100 text-slate-400">
+          <i data-lucide="X" class="w-4 h-4"></i>
+        </button>
+      </div>
+      <div id="modal-generic-body" class="p-6 text-xs text-slate-700 space-y-4 max-h-[75vh] overflow-y-auto"></div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast-notification" class="fixed bottom-4 right-4 z-50 hidden bg-slate-900 text-white px-4 py-2.5 rounded-xl shadow-lg flex items-center gap-2.5 text-xs font-medium">
+    <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+    <span id="toast-message">Salvo com sucesso</span>
+  </div>
+
+  <script src="data.js"></script>
+  <script src="supabase-config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

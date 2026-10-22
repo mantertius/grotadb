@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "name": "vigia-grotas-unima-afya",
+  "cleanUrls": true,
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
