@@ -45,61 +45,34 @@
       </div>
 
       <form id="login-form" class="space-y-4">
-        <div>
-          <label class="block text-xs font-medium text-slate-600 mb-1">Instituição / Unidade Docente</label>
-          <select id="login-institution" class="w-full rounded-xl border border-slate-200 bg-slate-50/70 px-3 py-2 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-white">
-            <option value="UNIMA | Afya — Maceió/AL" selected>UNIMA | Afya — UDA Maceió/AL</option>
-            <option value="UNIGRANRIO | Afya — Caxias/RJ">UNIGRANRIO | Afya — Caxias/RJ</option>
-            <option value="UNIPTAN | Afya — Minas Gerais">UNIPTAN | Afya — Minas Gerais</option>
-            <option value="UFAL / UNCISAL — Alagoas">UFAL / UNCISAL — Rede Conveniada</option>
-          </select>
-        </div>
-
-        <div class="grid grid-cols-5 gap-3">
-          <div class="col-span-2">
-            <label class="block text-xs font-medium text-slate-600 mb-1">Matrícula (RA)</label>
-            <input
-              type="text"
-              id="login-matricula"
-              required
-              value="202310845"
-              placeholder="202310845"
-              class="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs font-mono-code font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900"
-            />
-          </div>
-          <div class="col-span-3">
-            <label class="block text-xs font-medium text-slate-600 mb-1">Acadêmico(a) de Medicina</label>
-            <input
-              type="text"
-              id="login-name"
-              required
-              value="Gabriel Cavalcante"
-              class="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900"
-            />
-          </div>
-        </div>
-
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="block text-xs font-medium text-slate-600 mb-1">Ciclo</label>
-            <select id="login-period" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900">
-              <option value="9º Período • Internato MFC" selected>9º Período (Internato)</option>
-              <option value="10º Período • Clínica Médica">10º Período (Clínica)</option>
-              <option value="11º Período • Pediatria/GO">11º Período (Ped/GO)</option>
-              <option value="Ambulatório UDA">5º–8º Período (UDA)</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-xs font-medium text-slate-600 mb-1">Território de Atuação</label>
-            <select id="login-territory" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900">
-              <option value="Todas" selected>Ambas as Grotas</option>
-              <option value="Grota do Rafael">Grota do Rafael</option>
-              <option value="Grota do Arroz">Grota do Arroz</option>
-            </select>
-          </div>
-        </div>
-
+        <input type="hidden" id="login-institution" value="UNIMA | Afya — Maceió/AL" />
+        <input type="hidden" id="login-period" value="9º Período • Internato MFC" />
+        <input type="hidden" id="login-territory" value="Todas" />
         <input type="hidden" id="login-preceptor" value="Dra. Helena Vasconcelos (CRM-AL 6842)" />
+
+        <div>
+          <label class="block text-xs font-medium text-slate-600 mb-1.5">Número de Matrícula</label>
+          <input
+            type="text"
+            id="login-matricula"
+            required
+            value="202310845"
+            placeholder="Ex: 202310845"
+            class="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm font-mono-code font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900"
+          />
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-slate-600 mb-1.5">Nome do Acadêmico(a)</label>
+          <input
+            type="text"
+            id="login-name"
+            required
+            value="Gabriel Cavalcante"
+            placeholder="Nome completo do acadêmico"
+            class="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900"
+          />
+        </div>
 
         <button
           type="submit"
