@@ -1053,7 +1053,7 @@
 
       const todayStr = new Date().toISOString().slice(0, 10);
       const newConsultation = {
-        id: `ATD-${Math.floor(100 + Math.random() * 900)}`,
+        id: `ATD-${Date.now().toString().slice(-5)}`,
         date: todayStr,
         studentName: state.institution.activeAcademic.name,
         studentMatricula: state.institution.activeAcademic.matricula,
@@ -1086,7 +1086,7 @@
 
       if (window.SupabaseService && window.SupabaseService.isActive()) {
         window.SupabaseService.insertConsultationInCloud(patient, newConsultation)
-          .then(() => showToast("Atendimento sincronizado no Supabase Cloud"))
+          .then(() => showToast("Atendimento salvo na nuvem"))
           .catch(() => showToast("Atendimento salvo localmente"));
       } else {
         showToast("Atendimento registrado com sucesso");
@@ -1121,7 +1121,7 @@
       const waterAccess = document.getElementById("np-water").value;
       const medsRaw = document.getElementById("np-meds").value.trim();
 
-      const newId = `PAC-00${state.patients.length + 1}`;
+      const newId = `PAC-${Date.now().toString().slice(-4)}`;
       const todayStr = new Date().toISOString().slice(0, 10);
 
       const newPatient = {
@@ -1145,7 +1145,7 @@
         riskLevel,
         consultations: [
           {
-            id: `ATD-${Math.floor(100 + Math.random() * 900)}`,
+            id: `ATD-${Date.now().toString().slice(-5)}`,
             date: todayStr,
             studentName: state.institution.activeAcademic.name,
             studentMatricula: state.institution.activeAcademic.matricula,
@@ -1305,11 +1305,8 @@
     document.getElementById("btn-export-anonymized-csv").addEventListener("click", exportAnonymizedCsv);
 
     document.getElementById("btn-reset-data").addEventListener("click", () => {
-      localStorage.removeItem(STORAGE_KEY);
-      state = JSON.parse(JSON.stringify(window.INITIAL_DATA));
-      selectedPatientId = state.patients[0].id;
-      refreshAllViews();
-      showToast("Dados restaurados");
+      syncFromCloudIfAvailable();
+      showToast("Sincronizado com a nuvem");
     });
   }
 
@@ -1322,13 +1319,22 @@
         await window.SupabaseService.seedInitialDataToCloud(state);
         return;
       }
+      const prevCount = state.patients.reduce((acc, p) => acc + p.consultations.length, 0);
+      const newCount = cloudData.patients.reduce((acc, p) => acc + p.consultations.length, 0);
+      const changed =
+        cloudData.patients.length !== state.patients.length || newCount !== prevCount;
+
       state.patients = cloudData.patients;
       if (cloudData.scalableInstitutions) {
         state.scalableInstitutions = cloudData.scalableInstitutions;
       }
-      selectedPatientId = state.patients[0]?.id || null;
+      if (!state.patients.some((p) => p.id === selectedPatientId)) {
+        selectedPatientId = state.patients[0]?.id || null;
+      }
       saveState();
-      refreshAllViews();
+      if (changed) {
+        refreshAllViews();
+      }
     } catch (err) {
       console.warn(err);
     }
@@ -1340,5 +1346,7 @@
     refreshAllViews();
     evaluateVitalSignsAlert();
     syncFromCloudIfAvailable();
+    setInterval(syncFromCloudIfAvailable, 6000);
+    window.addEventListener("focus", syncFromCloudIfAvailable);
   });
 })();
