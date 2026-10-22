@@ -5,8 +5,8 @@
 // configurar pelo botão "Supabase Cloud" direto na interface do site!
 
 window.SUPABASE_DEFAULTS = {
-  url: "", // Ex: "https://xyzcompany.supabase.co"
-  anonKey: "" // Ex: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+  url: "https://irvaudlytilookjjuzuy.supabase.co",
+  anonKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlydmF1ZGx5dGlsb29ramp1enV5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI2Mjk4MzIsImV4cCI6MjEwODIwNTgzMn0.Ca8tIq1hjvGyVGThE-c6gS-79VSO0M8NiaSIJwMIjU8"
 };
 
 window.SupabaseService = (function () {
